@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>我的下拉框</title>
+		
+		<link href="css/select.css" rel="stylesheet" />
+		<link href="css/jquery.mCustomScrollbar.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="css/my.css"/>
+	</head>
+		
+		<form action="" method="get">
+			<select id="myselect" name="industry">
+				<option value="电信">电信</option>
+				<option value="广播电视">广播电视</option>
+				<option value="能源">能源</option>
+				<option value="金融">金融</option>
+				<option value="公路水路运输">公路水路运输</option>
+				<option value="铁路">铁路</option>
+				<option value="民航">民航</option>
+				<option value="邮政">邮政</option>
+				<option value="水利">水利</option>
+				<option value="应急管理">应急管理</option>
+				<option value="卫生健康">卫生健康</option>
+				<option value="社会保障">社会保障</option>
+				<option value="国防科工">国防科工</option>
+				<option value="政府部门">政府部门</option>
+				<option value="教育科研">教育科研</option>
+				<option value="工业制造">工业制造</option>
+				<option value="互联网">互联网</option>
+				<option value="新闻">新闻</option>
+				<option value="环境保护">环境保护</option>
+				<option value="公共事业">公共事业</option>
+				<option value="食品药品">食品药品</option>
+				<option value="化工">化工</option>
+				<option value="其他">其他</option>
+			</select>
+			
+			<select id="myselect2" name="group">
+				<option value="1">用户组1</option>
+				<option value="2">用户组2</option>
+				<option value="3">用户组3</option>
+				<option value="4">用户组4</option>
+				<option value="5">用户组5</option>
+				<option value="6">用户组6</option>
+			</select>
+			<input type="submit" value="提交" />
+		</form>
+		
+		<script src="js/jquery-1.11.3.min.js"></script>
+		<script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+		<script src="js/jquery.select.js"></script>
+		
+		<script type="text/javascript">
+			$("#myselect").select({
+				width: "150px",            //生成的select框宽度
+				listMaxHeight:"200px",     //生成的下拉列表最大高度
+				themeColor: "deepskyblue",    //主题颜色
+				fontColor: "#000",        //字体颜色
+				fontFamily: "'Helvetica Neue', arial, sans-serif",    //字体种类
+				fontSize:"14px",           //字体大小
+				showSearch: false,        //是否启用搜索框
+				rowColor:"#fff",          //行原本的颜色
+				rowHoverColor: "deepskyblue", //移动选择时，每一行的hover底色
+				fontHoverColor: "#fff",   //移动选择时，每一行的字体hover颜色
+				mainContent: "请选择",    //选择显示框的默认文字
+				searchContent: "关键词搜索"   //搜索框的默认提示文字 
+			});
+		</script>
+		
+		<script type="text/javascript">
+			$("#myselect2").select({
+				width: "200px"
+			});
+		</script>
+		
+	<body>
+	</body>
+</html>
