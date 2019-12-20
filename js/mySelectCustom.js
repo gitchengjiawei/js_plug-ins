@@ -27,6 +27,7 @@
                 listBackground: "#00003e",    //背景颜色
                 listColor: "#fff",        //字体颜色
                 listFontSize:"14px",           //字体大小
+				listBorder:"1px solid 536f80",           //字体大小
                 listHoverBg: "deepskyblue", //移动选择时，每一行的hover底色
                 listHoverColor: "#fff",   //移动选择时，每一行的字体hover颜色 
 				/* listPadding:'0', */
@@ -86,7 +87,9 @@
 			$This.find(".select_list_ul").css({'-moz-user-select':'none','-webkit-user-select':'none','user-select':'none'})
 			
 			//初始化一些非自定义必须的样式
+			$This.css({'position':'relative'});
 			$This.find('.select_list').hide();
+			$This.find('.select_list').css({'position':'absolute','min-width':opts.width.trim()});
 			$This.find(".select_list_ul").css({'list-style':'none','padding':'3px 0','margin':'0'});
 			$This.find(".select_list_body").find("li").css({'padding':'0 5px'});
 			$This.find(".select_list_body").css({'overflow-y':'hidden','cursor':'pointer','height':'100%'})
@@ -147,10 +150,16 @@
 				$This.find(".select_list_body").find("li").css('line-height',opts.listRowHeight.trim());
 			}
 			
+			if(opts.listBorder.trim() != ""){
+				$This.find(".select_list_body").css('border',opts.listBorder.trim());
+			}
+			
 			//获取此时列表的高度
 			var list_height = $This.find(".select_list").height();
 			var list_ul_height = 0;
 			var scrollBarHeight = 0;
+			var margintop = 0;
+			var scrollTop = 5;;
 			$This.find('.select_main').click(function(){
 				$This.find(".select_list").toggleClass('list_open');
 				if($This.find(".select_list").hasClass('list_open')){
@@ -158,11 +167,16 @@
 					list_ul_height = $This.find(".select_list_ul").innerHeight();
 					$This.find(".list_current").css({'background':opts.listHoverBg.trim(),
 						'color':opts.listHoverColor.trim()})
+						
 					showScroll();
 				}
 				else{
 					$This.find(".select_list").removeClass("list_open").animate({ "height": "0px" }, 200,function(){
 						$This.find(".select_list").hide();
+						$This.find(".select_list_ul").css('margin-top','0');
+						$This.find(".select_list_ul").css('margin-top','0');
+						margintop = 0;
+						scrollTop = 5;
 					});
 				}
 			});
@@ -177,7 +191,7 @@
                 $This.find('.select-replace-input').attr({ "val": $(this).attr("val") == null ? '' : $(this).attr("val")});
                 $this.val($(this).attr("val"));
 
-                $This.find(".select_content").trigger("click");
+                $This.find(".select_main").trigger("click");
             });
 			
 			function showScroll(){
@@ -186,15 +200,13 @@
 				
 				if(list_ul_height > list_height){
 					$This.find(".select_list").find(".scroll_bar").remove();
+					$This.find(".scroll_bar_container").remove();
 					$This.find(".select_list").append('\
 						<div class="scroll_bar_container">\
 							<div class="scroll_bar"></div>\
 						</div>\
 					')
-					
-					$This.find(".select_list").css('position','relative');
-					
-					
+
 					if(opts.scrollBarWidth.trim() != "")
 						$This.find(".scroll_bar").css({'width':opts.scrollBarWidth.trim()});
 					scrollHeight = list_height - 10;
@@ -215,9 +227,11 @@
 					
 				}
 			}
-			var margintop = 0;
-			var scrollTop = 5;
+			
+			// var margintop = 0;
+			// var scrollTop = 5;;
 			function scrollEvent(e){
+				
 				var maxMoveSize = (list_ul_height - list_height);
 				// console.info(list_ul_height + " : " + list_height + " : " + maxMoveSize)
 				var direct = 0;
@@ -251,14 +265,14 @@
 					var e = e || window.event;
 					y = e.clientY - $This.find(".scroll_bar")[0].offsetTop;
 					isDrop = true;
-					$This.find(".scroll_bar_container").bind("mousemove",function(es){
+					$This.find(".select_list").bind("mousemove",function(es){
 						
 						if(isDrop){
 							var es = es || window.event;
 							var moveY = es.clientY - y
 							var scrollmove = moveY;
 							scrollTop = scrollmove;
-							console.info(scrollmove + " : " + scrollTop);
+							// console.info(scrollmove + " : " + scrollTop);
 							var maxScrollTop = (list_height - scrollBarHeight - 10);
 							if(scrollTop < 5){
 								scrollTop = 5;
@@ -278,11 +292,22 @@
 					});
 				});
 				document.onmouseup = function() {
+					$This.find(".scroll_bar_container").bind("mousemove",function(){})
 					isDrop = false; //设置为false不可移动
 				}
 			}
 			
-
+			$(document).not('.select_main').on('mousedown', function (e) {
+				
+				/* var event = e || window.event;
+				var element = event.target || e.srcElement;
+				console.info("0......")
+				$(".select_list").removeClass("list_open").animate({ "height": "0px" }, 200,function(){
+					$This.find(".select_list").hide();
+				}); */
+				alert("click");
+			});
+			
             //返回原jquery对象,保持链式调用
             return $this;
 
