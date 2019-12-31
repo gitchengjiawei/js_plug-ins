@@ -51,7 +51,6 @@
             $this.hide();
             $this.after('\
                     <div class="select_container_nw" val="" text="">\
-					<input type="hidden" class="select-replace-input" />\
                         <div class="select_main">\
                            <span class="select_content">'+ opts.placeholder + '</span>\
                            <span class="select_arrow"></span>\
@@ -68,6 +67,9 @@
 
             //拿到新生成的对select替代的div
             var $This = $this.next();
+			
+			var selectName = $this.attr('name');
+			$This.find('.select-replace-input').attr('name',selectName);
 
             //灌入原select的数据
             $this.find("option").each(function (index, element) {
@@ -75,10 +77,20 @@
                 if ($(element).prop("selected")) {
                     $li.addClass("list_current");
                     $This.find(".select_content").text($(element).text());
-					$This.find(".select-replace-input").val($(element).val());
+					// $This.find(".select-replace-input").val($(element).val());
                 }
                 $This.find(".no_result").before($li);
             });
+			
+			$This.closest('form').on('reset',function () {
+				
+				var $firstOption = $This.find('.select_list_body').find('li').first();
+				
+				$This.find(".select_list_body").find('li').removeClass("list_current");
+				$This.find(".select_list_body").find('li').css({'background':opts.listBackground,'color':opts.listColor});
+				$firstOption.addClass("list_current");
+				$This.find(".select_content").text($firstOption.text());
+			});
 			
 			if($this.find("option").length > 0){
 				$This.find(".no_result").hide();
@@ -87,6 +99,7 @@
 			$This.find(".select_list_ul").css({'-moz-user-select':'none','-webkit-user-select':'none','user-select':'none'})
 			
 			//初始化一些非自定义必须的样式
+			$This.css({'vertical-align':'middle'});
 			$This.css({'position':'relative'});
 			$This.find('.select_list').hide();
 			$This.find('.select_list').css({'position':'absolute','min-width':opts.width.trim()});
@@ -161,6 +174,7 @@
 			var margintop = 0;
 			var scrollTop = 5;;
 			$This.find('.select_main').click(function(){
+				
 				$This.find(".select_list").toggleClass('list_open');
 				if($This.find(".select_list").hasClass('list_open')){
 					$This.find(".select_list").addClass("list_open").css({ "height": "0px" }).show().animate({ "height": list_height + "px" }, 200);
@@ -175,9 +189,9 @@
 						$This.find(".select_list").hide();
 						$This.find(".select_list_ul").css('margin-top','0');
 						$This.find(".select_list_ul").css('margin-top','0');
-						margintop = 0;
-						scrollTop = 5;
 					});
+					margintop = 0;
+					scrollTop = 5;
 				}
 			});
 
@@ -185,10 +199,11 @@
             $This.find(".select_list_body").delegate("li", "click", function () {
 				if ($(this).hasClass("no_result"))
 				    return;
-                $This.find(".select_list_body li").removeClass("list_current");
+                $This.find(".select_list_body").find('li').removeClass("list_current");
+				$This.find(".select_list_body").find('li').css({'background':opts.listBackground,'color':opts.listColor});
+				console.info($This.find(".select_list_body").find('li').length)
 				$(this).addClass("list_current");
                 $This.find(".select_content").text($(this).text());
-                $This.find('.select-replace-input').attr({ "val": $(this).attr("val") == null ? '' : $(this).attr("val")});
                 $this.val($(this).attr("val"));
 
                 $This.find(".select_main").trigger("click");
@@ -297,16 +312,22 @@
 				}
 			}
 			
-			$(document).not('.select_main').on('mousedown', function (e) {
-				
-				/* var event = e || window.event;
-				var element = event.target || e.srcElement;
-				console.info("0......")
-				$(".select_list").removeClass("list_open").animate({ "height": "0px" }, 200,function(){
-					$This.find(".select_list").hide();
-				}); */
-				alert("click");
-			});
+			$(document).on('click', function (e) {
+                var event = e || window.event;
+                var element = event.target || e.srcElement;
+                if ($(element).closest('.select_container_nw').length > 0) {
+					
+                    e.stopPropagation();
+                } else {
+                    $This.find(".select_list").removeClass("list_open").animate({ "height": "0px" }, 200,function(){
+                    	$This.find(".select_list").hide();
+                    	$This.find(".select_list_ul").css('margin-top','0');
+                    	$This.find(".select_list_ul").css('margin-top','0');
+                    	margintop = 0;
+                    	scrollTop = 5;
+                    });
+                }
+            });
 			
             //返回原jquery对象,保持链式调用
             return $this;
