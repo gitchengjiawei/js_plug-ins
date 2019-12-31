@@ -1,6 +1,6 @@
 ; (function ($, window, document, undefined) {
     $.fn.extend({
-        select: function (options) {
+        mySelect: function (options) {
 
             //默认参数
             var defaults = {
@@ -20,7 +20,7 @@
 				textSize: '-1',			//最大的显示文字
 				/* paddingLeft:'5px', */
 				/* icon:'none', */
-				icon:'../img/xiala.svg',
+				icon:'',
 				
 				/* 下拉列表样式 */
                 listMaxHeight:"200px",     //生成的下拉列表最大高度
@@ -39,6 +39,7 @@
 				scrollBarColor:'deepskyblue',
 				scrollBarBorderRadius:'2px',
 				stepSize:'20',
+				arrow:''
             }
 
             //将默认的参数对象和传进来的参数对象合并在一起
@@ -54,7 +55,6 @@
                         <div class="select_main">\
                            <span class="select_content">'+ opts.placeholder + '</span>\
                            <span class="select_arrow"></span>\
-                           <span class="select_arrow_after"></span>\
                         </div>\
                         <div class="select_list">\
 							<div class="select_list_body">\
@@ -99,30 +99,34 @@
 			$This.find(".select_list_ul").css({'-moz-user-select':'none','-webkit-user-select':'none','user-select':'none'})
 			
 			//初始化一些非自定义必须的样式
-			$This.css({'vertical-align':'middle'});
+			$This.css({'vertical-align':'middle','cursor':'default'});
 			$This.css({'position':'relative'});
 			$This.find('.select_list').hide();
-			$This.find('.select_list').css({'position':'absolute','min-width':opts.width.trim()});
+			$This.find('.select_content').css({'overflow':'hidden'});
+			$This.find('.select_list').css({'position':'absolute','min-width':opts.width.trim(),'z-index':'99999'});
 			$This.find(".select_list_ul").css({'list-style':'none','padding':'3px 0','margin':'0'});
-			$This.find(".select_list_body").find("li").css({'padding':'0 5px'});
+			$This.find(".select_list_body").find("li").css({'padding':'0 5px','text-overflow': 'ellipsis','white-space': 'nowrap'});
 			$This.find(".select_list_body").css({'overflow-y':'hidden','cursor':'pointer','height':'100%'})
-			$This.find(".select_content").css({'width':'fill-available','padding':'0 5px','overflow-x': 'hidden','text-overflow':'ellipsis','white-space': 'nowrap','width': 'max-content','display':'inline-block'});
+			$This.find(".select_content").css({'width':'-webkit-fill-available','padding':'0 5px','overflow-x': 'hidden','text-overflow':'ellipsis','white-space': 'nowrap','display':'inline-block'});
 			
 			
             //传进来的参数操作
 			if(opts.display.trim() != "")
 				$This.css('display',opts.display.trim());
             if (opts.width.trim() != ""){
-				$This.css("width", opts.width.trim());
-				if(opts.icon.trim() != "" && opts.icon.trim() != 'none'){
-					$This.find('.select_arrow').css('background','url(' + opts.icon.trim() + ')');
-					$This.find('.select_arrow').css({'display':'inline-block','height':'100%'});
-				}
+				$This.find('.select_main').css("width", opts.width.trim());
+				$This.find('.select_list').css("min-width", opts.width.trim());
 			}
 			if(opts.height.trim() != ""){
 				$This.css('height',opts.height.trim());
 				$This.css("line-height", opts.height.trim());
 				$This.find('.select_main').css('height',opts.height.trim());
+				if(opts.arrow.trim() != ""){
+					$This.find('.select_main').css({'position':'relative'});
+					$This.find('.select_arrow').css({'height':opts.height.trim(),'position':'absolute','top':'0','right':'0'});
+					$This.find('.select_arrow').html(opts.arrow.trim());
+					$This.find('.select_arrow').children().css({'display':'block','user-select':'none'});
+				}
 			}
 			if(opts.border.trim() != "")
 				$This.css('border',opts.border.trim());
@@ -175,16 +179,9 @@
 			var scrollTop = 5;;
 			$This.find('.select_main').click(function(){
 				
-				$This.find(".select_list").toggleClass('list_open');
+				// $This.find(".select_list").toggleClass('list_open');
 				if($This.find(".select_list").hasClass('list_open')){
-					$This.find(".select_list").addClass("list_open").css({ "height": "0px" }).show().animate({ "height": list_height + "px" }, 200);
-					list_ul_height = $This.find(".select_list_ul").innerHeight();
-					$This.find(".list_current").css({'background':opts.listHoverBg.trim(),
-						'color':opts.listHoverColor.trim()})
-						
-					showScroll();
-				}
-				else{
+					
 					$This.find(".select_list").removeClass("list_open").animate({ "height": "0px" }, 200,function(){
 						$This.find(".select_list").hide();
 						$This.find(".select_list_ul").css('margin-top','0');
@@ -193,7 +190,38 @@
 					margintop = 0;
 					scrollTop = 5;
 				}
+				else{
+					var $openSelect = $('.select_container_nw').find('.list_open');
+					console.info($openSelect.length);
+					if($openSelect.length > 0){
+						$openSelect.each(function (index, element) {
+							console.info('index : ' + index);
+							$(element).siblings('.select_main').trigger("click");
+							console.info('class : ' + $(element).attr('class'));
+						});
+					}
+					$This.find(".select_list").css({ "height": "0px" }).show().animate({ "height": list_height + "px" }, 200);
+					list_ul_height = $This.find(".select_list_ul").innerHeight();
+					$This.find(".list_current").css({'background':opts.listHoverBg.trim(),
+						'color':opts.listHoverColor.trim()})
+					$This.find(".select_list").addClass("list_open");
+					showScroll();
+				}
 			});
+			
+			//原select的值发生变化，就重新灌注select数据
+			/* $this.change(function(){
+				$This.find('.select_list_ul').find('li').not('.no_result').remove();
+				$this.find("option").each(function (index, element) {
+				    var $li = $('<li val=' + $(element).val() + '>' + $(element).text() + '</li>');
+				    if ($(element).prop("selected")) {
+				        $li.addClass("list_current");
+				        $This.find(".select_content").text($(element).text());
+						// $This.find(".select-replace-input").val($(element).val());
+				    }
+				    $This.find(".no_result").before($li);
+				});
+			}); */
 
             //为每一行元素添加点击事件
             $This.find(".select_list_body").delegate("li", "click", function () {
@@ -205,7 +233,7 @@
 				$(this).addClass("list_current");
                 $This.find(".select_content").text($(this).text());
                 $this.val($(this).attr("val"));
-
+				$this.trigger("change");
                 $This.find(".select_main").trigger("click");
             });
 			
@@ -316,7 +344,6 @@
                 var event = e || window.event;
                 var element = event.target || e.srcElement;
                 if ($(element).closest('.select_container_nw').length > 0) {
-					
                     e.stopPropagation();
                 } else {
                     $This.find(".select_list").removeClass("list_open").animate({ "height": "0px" }, 200,function(){
