@@ -1,15 +1,15 @@
 ; (function ($, window, document, undefined) {
-    $.fn.extend({
-        mySelect: function (options) {
+	$.fn.extend({
+		mySelect: function (options) {
 
-            //默认参数
-            var defaults = {
-				fontFamily: "'Helvetica Neue', arial, sans-serif",    //字体种类
-				placeholder: "请选择",    //选择显示框的默认文字
+			//默认参数
+			var defaults = {
+				fontFamily: "'Helvetica Neue', arial, sans-serif",	//字体种类
+				placeholder: "请选择",	//选择显示框的默认文字
 				display:'inline-block',
 				
 				/* 输入框的显示样式 */
-                width: "180px",            //生成的select框宽度
+				width: "180px",			//生成的select框宽度
 				height: "30px",				//select 高度
 				border: "1px solid deepskyblue",	//边框
 				background: "bottom",		//背景色
@@ -23,13 +23,13 @@
 				icon:'',
 				
 				/* 下拉列表样式 */
-                listMaxHeight:"200px",     //生成的下拉列表最大高度
-                listBackground: "#00003e",    //背景颜色
-                listColor: "#fff",        //字体颜色
-                listFontSize:"14px",           //字体大小
-				listBorder:"1px solid 536f80",           //字体大小
-                listHoverBg: "deepskyblue", //移动选择时，每一行的hover底色
-                listHoverColor: "#fff",   //移动选择时，每一行的字体hover颜色 
+				listMaxHeight:"200px",	 //生成的下拉列表最大高度
+				listBackground: "#00003e",	//背景颜色
+				listColor: "#fff",		//字体颜色
+				listFontSize:"14px",		   //字体大小
+				listBorder:"1px solid #536f80",		   
+				listHoverBg: "deepskyblue", //移动选择时，每一行的hover底色
+				listHoverColor: "#fff",   //移动选择时，每一行的字体hover颜色 
 				/* listPadding:'0', */
 				listRowHeight:'20px',
 				listContainerMargin:'10px 5px',
@@ -38,50 +38,50 @@
 				scrollBarWidth:'4px',
 				scrollBarColor:'deepskyblue',
 				scrollBarBorderRadius:'2px',
-				stepSize:'20',
+				stepSize:10,
 				
 				arrow:''
-            }
+			}
 
-            //将默认的参数对象和传进来的参数对象合并在一起
-            var opts = $.extend(defaults, options); 
+			//将默认的参数对象和传进来的参数对象合并在一起
+			var opts = $.extend(defaults, options); 
 
-            //重新为原select标签对象命名
-            var $this = this;
+			//重新为原select标签对象命名
+			var $this = this;
 
-            //隐藏原select标签，并且在其后添加需要的html元素
-            $this.hide();
-            $this.after('\
-                    <div class="select_container_nw" val="" text="">\
-                        <div class="select_main">\
-                           <span class="select_content">'+ opts.placeholder + '</span>\
-                           <span class="select_arrow"></span>\
-                        </div>\
-                        <div class="select_list">\
+			//隐藏原select标签，并且在其后添加需要的html元素
+			$this.hide();
+			$this.after('\
+					<div class="select_container_nw" val="" text="">\
+						<div class="select_main">\
+						   <span class="select_content">'+ opts.placeholder + '</span>\
+						   <span class="select_arrow"></span>\
+						</div>\
+						<div class="select_list">\
 							<div class="select_list_body">\
 								<ul class="select_list_ul">\
 									<li class="no_result">'+ opts.placeholder +'</li>\
 								</ul>\
 							</div>\
 						</div>\
-                    </div>');
+					</div>');
 
-            //拿到新生成的对select替代的div
-            var $This = $this.next();
+			//拿到新生成的对select替代的div
+			var $This = $this.next();
 			
 			var selectName = $this.attr('name');
 			$This.find('.select-replace-input').attr('name',selectName);
 
-            //灌入原select的数据
-            $this.find("option").each(function (index, element) {
-                var $li = $('<li val=' + $(element).val() + '>' + $(element).text() + '</li>');
-                if ($(element).prop("selected")) {
-                    $li.addClass("list_current");
-                    $This.find(".select_content").text($(element).text());
+			//灌入原select的数据
+			$this.find("option").each(function (index, element) {
+				var $li = $('<li val=' + $(element).val() + '>' + $(element).text() + '</li>');
+				if ($(element).prop("selected")) {
+					$li.addClass("list_current");
+					$This.find(".select_content").text($(element).text());
 					// $This.find(".select-replace-input").val($(element).val());
-                }
-                $This.find(".no_result").before($li);
-            });
+				}
+				$This.find(".no_result").before($li);
+			});
 			
 			var thisVal = $this.val();
 			
@@ -126,10 +126,10 @@
 			$This.find(".select_content").css({'width':'-webkit-fill-available','padding':'0 5px','overflow-x': 'hidden','text-overflow':'ellipsis','white-space': 'nowrap','display':'inline-block'});
 			
 			
-            //传进来的参数操作
+			//传进来的参数操作
 			if(opts.display.trim() != "")
 				$This.css('display',opts.display.trim());
-            if (opts.width.trim() != ""){
+			if (opts.width.trim() != ""){
 				$This.find('.select_main').css("width", opts.width.trim());
 				$This.find('.select_list').css("min-width", opts.width.trim());
 			}
@@ -163,24 +163,24 @@
 			if(opts.fontWeight.trim() != "")
 				$This.find(".select_content").css('font-weight',opts.fontWeight.trim());
 			
-            if (opts.listMaxHeight.trim() != "")
-                $This.find(".select_list_body").css("max-height", opts.listMaxHeight.trim());
+			if (opts.listMaxHeight.trim() != "")
+				$This.find(".select_list_body").css("max-height", opts.listMaxHeight.trim());
 			if (opts.listBackground.trim() != "")
-			    $This.find(".select_list_body").css("background", opts.listBackground.trim());
+				$This.find(".select_list_body").css("background", opts.listBackground.trim());
 			if(opts.listColor.trim() != "")
 				$This.find(".select_list_body").css("color", opts.listColor.trim());
 			if(opts.listFontSize.trim() != "")
 				$This.find(".select_list_body").css("font-size", opts.listFontSize.trim());
 			if(opts.listHoverBg.trim() != "" && opts.listHoverColor.trim() != "")
 				$This.find(".select_list_body").find("li").hover(function () {
-                    $(this).css({ "color": opts.listHoverColor.trim() });
-                    $(this).css({ "background": opts.listHoverBg.trim() });
-                }, function () {
+					$(this).css({ "color": opts.listHoverColor.trim() });
+					$(this).css({ "background": opts.listHoverBg.trim() });
+				}, function () {
 					if(!$(this).hasClass("list_current")){
 						$(this).css({ "color": opts.listColor.trim() });
 						$(this).css({ "background": opts.listBackground.trim() });
 					}
-                })
+				})
 			if(opts.listRowHeight.trim() != ""){
 				$This.find(".select_list_body").find("li").css('height',opts.listRowHeight.trim());
 				$This.find(".select_list_body").find("li").css('line-height',opts.listRowHeight.trim());
@@ -232,29 +232,29 @@
 			/* $this.change(function(){
 				$This.find('.select_list_ul').find('li').not('.no_result').remove();
 				$this.find("option").each(function (index, element) {
-				    var $li = $('<li val=' + $(element).val() + '>' + $(element).text() + '</li>');
-				    if ($(element).prop("selected")) {
-				        $li.addClass("list_current");
-				        $This.find(".select_content").text($(element).text());
+					var $li = $('<li val=' + $(element).val() + '>' + $(element).text() + '</li>');
+					if ($(element).prop("selected")) {
+						$li.addClass("list_current");
+						$This.find(".select_content").text($(element).text());
 						// $This.find(".select-replace-input").val($(element).val());
-				    }
-				    $This.find(".no_result").before($li);
+					}
+					$This.find(".no_result").before($li);
 				});
 			}); */
 
-            //为每一行元素添加点击事件
-            $This.find(".select_list_body").delegate("li", "click", function () {
+			//为每一行元素添加点击事件
+			$This.find(".select_list_body").delegate("li", "click", function () {
 				if ($(this).hasClass("no_result"))
-				    return;
-                $This.find(".select_list_body").find('li').removeClass("list_current");
+					return;
+				$This.find(".select_list_body").find('li').removeClass("list_current");
 				$This.find(".select_list_body").find('li').css({'background':opts.listBackground,'color':opts.listColor});
 				console.info($This.find(".select_list_body").find('li').length)
 				$(this).addClass("list_current");
-                $This.find(".select_content").text($(this).text());
-                $this.val($(this).attr("val"));
+				$This.find(".select_content").text($(this).text());
+				$this.val($(this).attr("val"));
 				$this.trigger("change");
-                $This.find(".select_main").trigger("click");
-            });
+				$This.find(".select_main").trigger("click");
+			});
 			
 			function showScroll(){
 				//获取此时列表的高度
@@ -281,73 +281,46 @@
 						$This.find(".scroll_bar").css({'border-radius':opts.scrollBarBorderRadius.trim()});
 					
 					$This.find(".select_list").hover(function(){
-						/* window.onmousewheel = document.onmousewheel = scrollEvent; */
-						if (window.addEventListener) {  
-							/** DOMMouseScroll is for mozilla. */  
-							window.addEventListener('DOMMouseScroll', scrollEvent, false);  
-						}  
-						/** IE/Opera. */  
-						window.onmousewheel = document.onmousewheel = scrollEvent; 
+						$(document).on('mousewheel DOMMouseScroll', scrollEvent);
 						mouseMoveEvent();
 					},function(){
-						if (window.addEventListener) {
-							/** DOMMouseScroll is for mozilla. */  
-							window.addEventListener('DOMMouseScroll', function(){}, false);  
-						}  
-						/** IE/Opera. */  
-						window.onmousewheel = document.onmousewheel = function(){}; 
+						$(document).on('mousewheel DOMMouseScroll', function(){});
 					})
-					
 				}
 			}
 			
-			// var margintop = 0;
-			// var scrollTop = 5;;
 			function scrollEvent(e){
 				
+				var ulMarginTopNow = parseInt($This.find(".select_list_ul").css('margin-top'));
+				var scrollMarginTopNow = parseInt($This.find(".select_list_ul").css('margin-top'));
+				
 				var maxMoveSize = (list_ul_height - list_height);
-				// console.info(list_ul_height + " : " + list_height + " : " + maxMoveSize)
+				var maxScrollMoveSize = (list_height - 10 - scrollBarHeight);
 				var direct = 0;
 				e = e || window.event;
 				var step = 0;
 				var moveSize = 0;
-				var stepSize = 10;
-				console.info(e.detail + "0000")
-				if(e.wheelDelta){	//IE 或者 谷歌
-					step = e.wheelDelta/120; 
-					moveSize = stepSize * step;
-					margintop += moveSize;
-					if(margintop > 0 ){
-						margintop = 0;
-					}else if(margintop < - maxMoveSize){
-						margintop = - maxMoveSize;
-					}
-					$This.find(".select_list_ul").animate({
-						'margin-top': margintop
-					},0);
-					scrollTop = margintop / list_ul_height * (list_height - 10) - 5;
-					$This.find(".scroll_bar").animate({
-						'margin-top': -scrollTop
-					},0);
-				}else if(e.detail){
-					console.info("e.detail : " + e.detail)
-					step = -e.detail / 3; ;
-					console.info("e.detail step : " + step)
-					moveSize = stepSize * step;
-					margintop += moveSize;
-					if(margintop > 0 ){
-						margintop = 0;
-					}else if(margintop < - maxMoveSize){
-						margintop = - maxMoveSize;
-					}
-					$This.find(".select_list_ul").animate({
-						'margin-top': margintop
-					},0);
-					scrollTop = margintop / list_ul_height * (list_height - 10) - 5;
-					$This.find(".scroll_bar").animate({
-						'margin-top': -scrollTop
-					},0);
+				var size = opts.stepSize;
+				
+				// IE 谷歌 || 火狐
+				var wheel = e.originalEvent.wheelDelta || -e.originalEvent.detail;
+				var delta = Math.max(-1, Math.min(1, wheel) );
+				
+				moveSize = size * delta;
+				var margintop = ulMarginTopNow + moveSize;
+				if(margintop > 0 ){
+					margintop = 0;
+				}else if(margintop < - maxMoveSize){
+					margintop = - maxMoveSize;
 				}
+				$This.find(".select_list_ul").animate({
+					'margin-top': margintop
+				},0);
+				
+				var scrollTop = - maxScrollMoveSize * (margintop / maxMoveSize)
+				$This.find(".scroll_bar").animate({
+					'margin-top': scrollTop
+				},0);
 			}
 			
 			var y = 0;
@@ -362,23 +335,22 @@
 						if(isDrop){
 							var es = es || window.event;
 							var moveY = es.clientY - y
-							var scrollmove = moveY;
-							scrollTop = scrollmove;
-							// console.info(scrollmove + " : " + scrollTop);
-							var maxScrollTop = (list_height - scrollBarHeight - 10);
+							var scrollTop = moveY;
+							var maxUlMoveSize = (list_ul_height - list_height);
+							var maxScrollMoveSize = (list_height - 10 - scrollBarHeight);
 							if(scrollTop < 5){
 								scrollTop = 5;
-							}else if(scrollTop > maxScrollTop){
-								scrollTop = maxScrollTop;
+							}else if(scrollTop > maxScrollMoveSize){
+								scrollTop = maxScrollMoveSize;
 							}
 							
 							$This.find(".scroll_bar").animate({
 								'margin-top': scrollTop
 							},0);
 							
-							margintop = (scrollTop - 5)/maxScrollTop * (list_ul_height - list_height + 10);
+							var margintop = - maxUlMoveSize * ((scrollTop-5) / (maxScrollMoveSize + 5));
 							$This.find(".select_list_ul").animate({
-								'margin-top': -margintop
+								'margin-top': margintop
 							},0);
 						}
 					});
@@ -390,25 +362,23 @@
 			}
 			
 			$(document).on('click', function (e) {
-                var event = e || window.event;
-                var element = event.target || e.srcElement;
-                if ($(element).closest('.select_container_nw').length > 0) {
-                    e.stopPropagation();
-                } else {
-                    $This.find(".select_list").removeClass("list_open").animate({ "height": "0px" }, 200,function(){
-                    	$This.find(".select_list").hide();
-                    	$This.find(".select_list_ul").css('margin-top','0');
-                    	$This.find(".select_list_ul").css('margin-top','0');
-                    	margintop = 0;
-                    	scrollTop = 5;
-                    });
-                }
-            });
+				var event = e || window.event;
+				var element = event.target || e.srcElement;
+				if ($(element).closest('.select_container_nw').length > 0) {
+					e.stopPropagation();
+				} else {
+					$This.find(".select_list").removeClass("list_open").animate({ "height": "0px" }, 200,function(){
+						$This.find(".select_list").hide();
+						$This.find(".select_list_ul").css('margin-top','0');
+						$This.find(".select_list_ul").css('margin-top','0');
+					});
+				}
+			});
 			
-            //返回原jquery对象,保持链式调用
-            return $this;
+			//返回原jquery对象,保持链式调用
+			return $this;
 
-            //////////////////////////////////////////////////////////代码内部
-        }
-    });
+			//////////////////////////////////////////////////////////代码内部
+		}
+	});
 })(jQuery, window, document)

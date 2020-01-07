@@ -37,7 +37,7 @@
 						
 						normal:{
 							background: "bottom",		//背景色
-							color:'#000'
+							color:'#fff'
 						},
 						highLight:{
 							color:'#fff',
@@ -54,7 +54,7 @@
 					itemStyle:{
 						height:'250px',
 						width:'150px',
-						background:'bottom',
+						background:'#00003e',
 						border:'1px solid #536f80',
 						borderRadius:'0'
 					}
@@ -64,7 +64,8 @@
 					color:'deepskyblue',
 					width:'4px',
 					border:'none',
-					boederRadius:'2px'
+					boederRadius:'2px',
+					stepSize:10
 				},
 				/* 箭头样式 */
 				arrow:{
@@ -139,7 +140,7 @@
 				if(tmp !== thisVal){
 					thisVal = tmp;
 					$This.find(".select_list_body").find('li').removeClass("list_current");
-					$This.find(".select_list_body").find('li').css({'background':opts.options.itemStyle.backgroud.trim(),'color':opts.options.option.normal.trim()});
+					$This.find(".select_list_body").find('li').css({'background':opts.options.itemStyle.background.trim(),'color':opts.options.option.normal.color.trim()});
 					/* console.info($This.find(".select_list_body").find('li').length) */
 					var $newSelected = $This.find(".select_list_body").find('li[val=\"' + thisVal + '\"]');
 					$newSelected.addClass("list_current");
@@ -193,7 +194,6 @@
 				$This.find('.select_arrow').children().css({'display':'block','-moz-user-select':'none','-webkit-user-select':'none','user-select':'none'});
 				var arrowWidth = $This.find('.select_arrow').outerWidth(true);
 				var textboxWidth = $This.find('.select_main').innerWidth();
-				console.info(arrowWidth + " : " + textboxWidth);
 				$This.find('.select_content').css({'width':(textboxWidth-arrowWidth) + 'px'});
 			}
 			
@@ -231,11 +231,9 @@
 			});
 			
 			//获取此时列表的高度
-			var list_height = $This.find(".select_list").height();
+			var list_height = $This.find(".select_list").innerHeight();
 			var list_ul_height = 0;
 			var scrollBarHeight = 0;
-			var margintop = 0;
-			var scrollTop = 5;;
 			$This.find('.select_main').click(function(){
 				
 				if($This.find(".select_list").hasClass('list_open')){
@@ -245,8 +243,6 @@
 						$This.find(".select_list_ul").css('margin-top','0');
 						$This.find(".select_list_ul").css('margin-top','0');
 					});
-					margintop = 0;
-					scrollTop = 5;
 				}
 				else{
 					var $openSelect = $('.select_container_nw').find('.list_open');
@@ -259,7 +255,7 @@
 						});
 					}
 					$This.find(".select_list").css({ "height": "0px" }).show().animate({ "height": list_height + "px" }, 200);
-					list_ul_height = $This.find(".select_list_ul").innerHeight();
+					list_ul_height = $This.find(".select_list_ul").outerHeight(true);
 					$This.find(".list_current").css({
 						'background':opts.options.option.highLight.background.trim(),
 						'color':opts.options.option.highLight.color.trim()})
@@ -313,72 +309,46 @@
 					});
 					
 					$This.find(".select_list").hover(function(){
-						if (window.addEventListener) {  
-							/** DOMMouseScroll is for mozilla. */  
-							window.addEventListener('DOMMouseScroll', scrollEvent, false);  
-						}  
-						/** IE/Opera. */  
-						window.onmousewheel = document.onmousewheel = scrollEvent; 
+						$(document).on('mousewheel DOMMouseScroll', scrollEvent);
 						mouseMoveEvent();
 					},function(){
-						if (window.addEventListener) {
-							/** DOMMouseScroll is for mozilla. */  
-							window.addEventListener('DOMMouseScroll', function(){}, false);  
-						}  
-						/** IE/Opera. */  
-						window.onmousewheel = document.onmousewheel = function(){}; 
+						$(document).on('mousewheel DOMMouseScroll', function(){});
 					})
-					
 				}
 			}
 			
-			// var margintop = 0;
-			// var scrollTop = 5;;
 			function scrollEvent(e){
 				
+				var ulMarginTopNow = parseInt($This.find(".select_list_ul").css('margin-top'));
+				var scrollMarginTopNow = parseInt($This.find(".select_list_ul").css('margin-top'));
+				
 				var maxMoveSize = (list_ul_height - list_height);
-				// console.info(list_ul_height + " : " + list_height + " : " + maxMoveSize)
+				var maxScrollMoveSize = (list_height - 10 - scrollBarHeight);
 				var direct = 0;
 				e = e || window.event;
 				var step = 0;
 				var moveSize = 0;
-				var stepSize = 10;
-				console.info(e.detail + "0000")
-				if(e.wheelDelta){	//IE 或者 谷歌
-					step = e.wheelDelta/120; 
-					moveSize = stepSize * step;
-					margintop += moveSize;
-					if(margintop > 0 ){
-						margintop = 0;
-					}else if(margintop < - maxMoveSize){
-						margintop = - maxMoveSize;
-					}
-					$This.find(".select_list_ul").animate({
-						'margin-top': margintop
-					},0);
-					scrollTop = margintop / list_ul_height * (list_height - 10) - 5;
-					$This.find(".scroll_bar").animate({
-						'margin-top': -scrollTop
-					},0);
-				}else if(e.detail){
-					console.info("e.detail : " + e.detail)
-					step = -e.detail / 3; ;
-					console.info("e.detail step : " + step)
-					moveSize = stepSize * step;
-					margintop += moveSize;
-					if(margintop > 0 ){
-						margintop = 0;
-					}else if(margintop < - maxMoveSize){
-						margintop = - maxMoveSize;
-					}
-					$This.find(".select_list_ul").animate({
-						'margin-top': margintop
-					},0);
-					scrollTop = margintop / list_ul_height * (list_height - 10) - 5;
-					$This.find(".scroll_bar").animate({
-						'margin-top': -scrollTop
-					},0);
+				var size = opts.scroll.stepSize;
+				
+				// IE 谷歌 || 火狐
+				var wheel = e.originalEvent.wheelDelta || -e.originalEvent.detail;
+				var delta = Math.max(-1, Math.min(1, wheel) );
+				
+				moveSize = size * delta;
+				var margintop = ulMarginTopNow + moveSize;
+				if(margintop > 0 ){
+					margintop = 0;
+				}else if(margintop < - maxMoveSize){
+					margintop = - maxMoveSize;
 				}
+				$This.find(".select_list_ul").animate({
+					'margin-top': margintop
+				},0);
+				
+				var scrollTop = - maxScrollMoveSize * (margintop / maxMoveSize)
+				$This.find(".scroll_bar").animate({
+					'margin-top': scrollTop
+				},0);
 			}
 			
 			var y = 0;
@@ -393,23 +363,22 @@
 						if(isDrop){
 							var es = es || window.event;
 							var moveY = es.clientY - y
-							var scrollmove = moveY;
-							scrollTop = scrollmove;
-							// console.info(scrollmove + " : " + scrollTop);
-							var maxScrollTop = (list_height - scrollBarHeight - 10);
+							var scrollTop = moveY;
+							var maxUlMoveSize = (list_ul_height - list_height);
+							var maxScrollMoveSize = (list_height - 10 - scrollBarHeight);
 							if(scrollTop < 5){
 								scrollTop = 5;
-							}else if(scrollTop > maxScrollTop){
-								scrollTop = maxScrollTop;
+							}else if(scrollTop > maxScrollMoveSize){
+								scrollTop = maxScrollMoveSize;
 							}
 							
 							$This.find(".scroll_bar").animate({
 								'margin-top': scrollTop
 							},0);
 							
-							margintop = (scrollTop - 5)/maxScrollTop * (list_ul_height - list_height + 10);
+							var margintop = - maxUlMoveSize * ((scrollTop-5) / (maxScrollMoveSize + 5));
 							$This.find(".select_list_ul").animate({
-								'margin-top': -margintop
+								'margin-top': margintop
 							},0);
 						}
 					});
@@ -430,8 +399,6 @@
 						$This.find(".select_list").hide();
 						$This.find(".select_list_ul").css('margin-top','0');
 						$This.find(".select_list_ul").css('margin-top','0');
-						margintop = 0;
-						scrollTop = 5;
 					});
 				}
 			});
