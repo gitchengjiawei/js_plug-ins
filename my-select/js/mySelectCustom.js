@@ -39,6 +39,7 @@
 				scrollBarColor:'deepskyblue',
 				scrollBarBorderRadius:'2px',
 				stepSize:'20',
+				
 				arrow:''
             }
 
@@ -141,6 +142,9 @@
 					$This.find('.select_arrow').css({'height':opts.height.trim(),'position':'absolute','top':'0','right':'0'});
 					$This.find('.select_arrow').html(opts.arrow.trim());
 					$This.find('.select_arrow').children().css({'display':'block','user-select':'none'});
+					var arrowWidth = $This.find('.select_arrow').outerWidth(true);
+					var textboxWidth = $This.find('.select_main').innerWidth();
+					$This.find('.select_content').css({'width':(textboxWidth-arrowWidth) + 'px'});
 				}
 			}
 			if(opts.border.trim() != "")
