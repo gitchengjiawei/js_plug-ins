@@ -82,6 +82,21 @@
                 $This.find(".no_result").before($li);
             });
 			
+			var thisVal = $this.val();
+			
+			setInterval(function(){
+				var tmp = $this.val();
+				if(tmp !== thisVal){
+					thisVal = tmp;
+					$This.find(".select_list_body").find('li').removeClass("list_current");
+					$This.find(".select_list_body").find('li').css({'background':opts.listBackground,'color':opts.listColor});
+					/* console.info($This.find(".select_list_body").find('li').length) */
+					var $newSelected = $This.find(".select_list_body").find('li[val=\"' + thisVal + '\"]');
+					$newSelected.addClass("list_current");
+					$This.find(".select_content").text($newSelected.text());
+				}
+			},100);
+			
 			$This.closest('form').on('reset',function () {
 				
 				var $firstOption = $This.find('.select_list_body').find('li').first();
@@ -192,12 +207,12 @@
 				}
 				else{
 					var $openSelect = $('.select_container_nw').find('.list_open');
-					console.info($openSelect.length);
+					/* console.info($openSelect.length); */
 					if($openSelect.length > 0){
 						$openSelect.each(function (index, element) {
-							console.info('index : ' + index);
+							/* console.info('index : ' + index); */
 							$(element).siblings('.select_main').trigger("click");
-							console.info('class : ' + $(element).attr('class'));
+							/* console.info('class : ' + $(element).attr('class')); */
 						});
 					}
 					$This.find(".select_list").css({ "height": "0px" }).show().animate({ "height": list_height + "px" }, 200);
@@ -262,10 +277,21 @@
 						$This.find(".scroll_bar").css({'border-radius':opts.scrollBarBorderRadius.trim()});
 					
 					$This.find(".select_list").hover(function(){
-						window.onmousewheel = document.onmousewheel = scrollEvent;
+						/* window.onmousewheel = document.onmousewheel = scrollEvent; */
+						if (window.addEventListener) {  
+							/** DOMMouseScroll is for mozilla. */  
+							window.addEventListener('DOMMouseScroll', scrollEvent, false);  
+						}  
+						/** IE/Opera. */  
+						window.onmousewheel = document.onmousewheel = scrollEvent; 
 						mouseMoveEvent();
 					},function(){
-						window.onmousewheel = document.onmousewheel = {};
+						if (window.addEventListener) {
+							/** DOMMouseScroll is for mozilla. */  
+							window.addEventListener('DOMMouseScroll', function(){}, false);  
+						}  
+						/** IE/Opera. */  
+						window.onmousewheel = document.onmousewheel = function(){}; 
 					})
 					
 				}
@@ -282,8 +308,27 @@
 				var step = 0;
 				var moveSize = 0;
 				var stepSize = 10;
+				console.info(e.detail + "0000")
 				if(e.wheelDelta){	//IE 或者 谷歌
 					step = e.wheelDelta/120; 
+					moveSize = stepSize * step;
+					margintop += moveSize;
+					if(margintop > 0 ){
+						margintop = 0;
+					}else if(margintop < - maxMoveSize){
+						margintop = - maxMoveSize;
+					}
+					$This.find(".select_list_ul").animate({
+						'margin-top': margintop
+					},0);
+					scrollTop = margintop / list_ul_height * (list_height - 10) - 5;
+					$This.find(".scroll_bar").animate({
+						'margin-top': -scrollTop
+					},0);
+				}else if(e.detail){
+					console.info("e.detail : " + e.detail)
+					step = -e.detail / 3; ;
+					console.info("e.detail step : " + step)
 					moveSize = stepSize * step;
 					margintop += moveSize;
 					if(margintop > 0 ){
