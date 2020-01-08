@@ -191,7 +191,7 @@
 				$This.find('.select_arrow').text(opts.arrow.content.trim());
 				$This.find('.select_main').css({'position':'relative'});
 				$This.find('.select_arrow').css({'height':opts.arrow.height.trim(),width:opts.arrow.width.trim(),'position':'absolute','top':'0','right':'0'});
-				$This.find('.select_arrow').children().css({'display':'block','-moz-user-select':'none','-webkit-user-select':'none','user-select':'none'});
+				$This.find('.select_arrow').css({'display':'block','-moz-user-select':'none','-webkit-user-select':'none','user-select':'none'});
 				var arrowWidth = $This.find('.select_arrow').outerWidth(true);
 				var textboxWidth = $This.find('.select_main').innerWidth();
 				$This.find('.select_content').css({'width':(textboxWidth-arrowWidth) + 'px'});
@@ -309,15 +309,44 @@
 					});
 					
 					$This.find(".select_list").hover(function(){
-						$(document).on('mousewheel DOMMouseScroll', scrollEvent);
+						var objEvt = getElementEvent($This.find(".select_list")[0],'mousewheel DOMMouseScroll');
+						if(objEvt.length == 0){
+							$This.find(".select_list").on('mousewheel DOMMouseScroll', scrollEvent);
+						}
 						mouseMoveEvent();
 					},function(){
-						$(document).on('mousewheel DOMMouseScroll', function(){});
+						var objEvt = getElementEvent($This.find(".select_list")[0],'mousewheel DOMMouseScroll');
+						if(objEvt.length > 0){
+							$This.find(".select_list").unbind('mousewheel DOMMouseScroll');
+						}
 					})
 				}
 			}
 			
+			//获取dom元素绑定事件(兼容全部版本jquery)
+			function getElementEvent(obj,event){
+				var events =  $.data(obj,'events') || $._data(obj,'events');
+				
+				var result = [];
+				if(event){
+					var arr = event.trim().split(/\s+/);
+					$.each(arr,function(index,value){
+						var one = events[value];
+						if(one){
+							result.push(one)
+						}
+					});
+				}
+				
+				return result;
+			}
+			
+			var usable = true;
 			function scrollEvent(e){
+				
+				if(!usable){
+					return;
+				}
 				
 				var ulMarginTopNow = parseInt($This.find(".select_list_ul").css('margin-top'));
 				var scrollMarginTopNow = parseInt($This.find(".select_list_ul").css('margin-top'));
@@ -335,6 +364,7 @@
 				var delta = Math.max(-1, Math.min(1, wheel) );
 				
 				moveSize = size * delta;
+				console.info(size + " : " + moveSize);
 				var margintop = ulMarginTopNow + moveSize;
 				if(margintop > 0 ){
 					margintop = 0;
@@ -349,6 +379,8 @@
 				$This.find(".scroll_bar").animate({
 					'margin-top': scrollTop
 				},0);
+				
+				usable = true;
 			}
 			
 			var y = 0;
@@ -382,11 +414,12 @@
 							},0);
 						}
 					});
+					
+					document.onmouseup = function() {
+						$This.find(".scroll_bar_container").bind("mousemove",function(){})
+						isDrop = false; //设置为false不可移动
+					}
 				});
-				document.onmouseup = function() {
-					$This.find(".scroll_bar_container").bind("mousemove",function(){})
-					isDrop = false; //设置为false不可移动
-				}
 			}
 			
 			$(document).on('click', function (e) {

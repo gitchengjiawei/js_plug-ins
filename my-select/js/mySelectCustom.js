@@ -91,7 +91,7 @@
 					thisVal = tmp;
 					$This.find(".select_list_body").find('li').removeClass("list_current");
 					$This.find(".select_list_body").find('li').css({'background':opts.listBackground,'color':opts.listColor});
-					/* console.info($This.find(".select_list_body").find('li').length) */
+					
 					var $newSelected = $This.find(".select_list_body").find('li[val=\"' + thisVal + '\"]');
 					$newSelected.addClass("list_current");
 					$This.find(".select_content").text($newSelected.text());
@@ -211,12 +211,11 @@
 				}
 				else{
 					var $openSelect = $('.select_container_nw').find('.list_open');
-					/* console.info($openSelect.length); */
+					
 					if($openSelect.length > 0){
 						$openSelect.each(function (index, element) {
-							/* console.info('index : ' + index); */
+							
 							$(element).siblings('.select_main').trigger("click");
-							/* console.info('class : ' + $(element).attr('class')); */
 						});
 					}
 					$This.find(".select_list").css({ "height": "0px" }).show().animate({ "height": list_height + "px" }, 200);
@@ -227,20 +226,6 @@
 					showScroll();
 				}
 			});
-			
-			//原select的值发生变化，就重新灌注select数据
-			/* $this.change(function(){
-				$This.find('.select_list_ul').find('li').not('.no_result').remove();
-				$this.find("option").each(function (index, element) {
-					var $li = $('<li val=' + $(element).val() + '>' + $(element).text() + '</li>');
-					if ($(element).prop("selected")) {
-						$li.addClass("list_current");
-						$This.find(".select_content").text($(element).text());
-						// $This.find(".select-replace-input").val($(element).val());
-					}
-					$This.find(".no_result").before($li);
-				});
-			}); */
 
 			//为每一行元素添加点击事件
 			$This.find(".select_list_body").delegate("li", "click", function () {
@@ -248,7 +233,7 @@
 					return;
 				$This.find(".select_list_body").find('li').removeClass("list_current");
 				$This.find(".select_list_body").find('li').css({'background':opts.listBackground,'color':opts.listColor});
-				console.info($This.find(".select_list_body").find('li').length)
+				
 				$(this).addClass("list_current");
 				$This.find(".select_content").text($(this).text());
 				$this.val($(this).attr("val"));
@@ -280,13 +265,38 @@
 					if(opts.scrollBarBorderRadius.trim() != "")
 						$This.find(".scroll_bar").css({'border-radius':opts.scrollBarBorderRadius.trim()});
 					
+					//防止多次添加 鼠标滚动事件，使得滚动条速度越来越快
 					$This.find(".select_list").hover(function(){
-						$(document).on('mousewheel DOMMouseScroll', scrollEvent);
+						var objEvt = getElementEvent($This.find(".select_list")[0],'mousewheel DOMMouseScroll');
+						if(objEvt.length == 0){
+							$This.find(".select_list").on('mousewheel DOMMouseScroll', scrollEvent);
+						}
 						mouseMoveEvent();
 					},function(){
-						$(document).on('mousewheel DOMMouseScroll', function(){});
+						var objEvt = getElementEvent($This.find(".select_list")[0],'mousewheel DOMMouseScroll');
+						if(objEvt.length > 0){
+							$This.find(".select_list").unbind('mousewheel DOMMouseScroll');
+						}
 					})
 				}
+			}
+			
+			//获取dom元素绑定事件(兼容全部版本jquery)
+			function getElementEvent(obj,event){
+				var events =  $.data(obj,'events') || $._data(obj,'events');
+				
+				var result = [];
+				if(event){
+					var arr = event.trim().split(/\s+/);
+					$.each(arr,function(index,value){
+						var one = events[value];
+						if(one){
+							result.push(one)
+						}
+					});
+				}
+				
+				return result;
 			}
 			
 			function scrollEvent(e){
