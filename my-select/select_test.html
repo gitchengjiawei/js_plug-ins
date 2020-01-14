@@ -10,7 +10,7 @@
 	</head>
 		
 		<form action="" method="get">
-			<select id="myselect" name="industry">
+			<select id="myselect" name="industry" class="select">
 				<option value="电信">电信</option>
 				<option value="广播电视">广播电视</option>
 				<option value="能源">能源</option>
@@ -36,25 +36,25 @@
 				<option value="其他">其他</option>
 			</select>
 			
-			<select id="myselect2" name="group">
+			<select id="myselect2" name="group" class="select">
 				<option value="1">用户组1</option>
 				<option value="2">用户组2</option>
 				<option value="3">用户组3</option>
 				<option value="4">用户组4</option>
 				<option value="5">用户组5</option>
 				<option value="6">用户组6</option>
-				<option value="1">用户组1</option>
-				<option value="2">用户组2</option>
-				<option value="3">用户组3</option>
-				<option value="4">用户组4</option>
-				<option value="5">用户组5</option>
-				<option value="6">用户组6</option>
-				<option value="1">用户组1</option>
-				<option value="2">用户组2</option>
-				<option value="3">用户组3</option>
-				<option value="4">用户组4</option>
-				<option value="5">用户组5</option>
-				<option value="6">用户组6</option>
+				<option value="7">用户组1</option>
+				<option value="8">用户组2</option>
+				<option value="9">用户组3</option>
+				<option value="10">用户组4</option>
+				<option value="11">用户组5</option>
+				<option value="12">用户组6</option>
+				<option value="13">用户组1</option>
+				<option value="14">用户组2</option>
+				<option value="15">用户组3</option>
+				<option value="16">用户组4</option>
+				<option value="17">用户组5</option>
+				<option value="18">用户组6</option>
 			</select>
 			<input type="submit" value="提交" />
 			<input type="reset" value="清除" />
@@ -65,7 +65,8 @@
 		
 		<script type="text/javascript">
 			$("#myselect").mySelect({
-				width: "100px"
+				width: "100px",
+				arrow:'<img src="./img/xiala.svg" style="height:16px;margin-top:5px" />',
 			});
 		</script>
 		

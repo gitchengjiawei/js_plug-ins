@@ -26,21 +26,23 @@
 				listMaxHeight:"200px",	 //生成的下拉列表最大高度
 				listBackground: "#00003e",	//背景颜色
 				listColor: "#fff",		//字体颜色
-				listFontSize:"14px",		   //字体大小
-				listBorder:"1px solid #536f80",		   
-				listHoverBg: "deepskyblue", //移动选择时，每一行的hover底色
-				listHoverColor: "#fff",   //移动选择时，每一行的字体hover颜色 
+				listFontSize:"14px",			//字体大小
+				listBorder:"1px solid #536f80",			
+				listHoverBg: "#1E90FF", //移动选择时，每一行的hover底色
+				listHoverColor: "#fff",	//移动选择时，每一行的字体hover颜色 
 				/* listPadding:'0', */
 				listRowHeight:'20px',
 				listContainerMargin:'10px 5px',
 				
 				/* 滚动条样式 */
-				scrollBarWidth:'4px',
-				scrollBarColor:'deepskyblue',
+				scrollBarWidth:'6px',
+				scrollBarColor:'rgb(32, 134, 234)',
 				scrollBarBorderRadius:'2px',
 				stepSize:10,
 				
-				arrow:''
+				arrow:'',
+				arrowTip:'img',
+				animate:0
 			}
 
 			//将默认的参数对象和传进来的参数对象合并在一起
@@ -54,8 +56,8 @@
 			$this.after('\
 					<div class="select_container_nw" val="" text="">\
 						<div class="select_main">\
-						   <span class="select_content">'+ opts.placeholder + '</span>\
-						   <span class="select_arrow"></span>\
+							<span class="select_content">'+ opts.placeholder + '</span>\
+							<span class="select_arrow"></span>\
 						</div>\
 						<div class="select_list">\
 							<div class="select_list_body">\
@@ -115,8 +117,7 @@
 			$This.find(".select_list_ul").css({'-moz-user-select':'none','-webkit-user-select':'none','user-select':'none'})
 			
 			//初始化一些非自定义必须的样式
-			$This.css({'vertical-align':'middle','cursor':'default'});
-			$This.css({'position':'relative'});
+			$This.css({'vertical-align':'middle','cursor':'default','box-sizing':'border-box','position':'relative'});
 			$This.find('.select_list').hide();
 			$This.find('.select_content').css({'overflow':'hidden'});
 			$This.find('.select_list').css({'position':'absolute','min-width':opts.width.trim(),'z-index':'99999'});
@@ -142,9 +143,11 @@
 					$This.find('.select_arrow').css({'height':opts.height.trim(),'position':'absolute','top':'0','right':'0'});
 					$This.find('.select_arrow').html(opts.arrow.trim());
 					$This.find('.select_arrow').children().css({'display':'block','user-select':'none'});
-					var arrowWidth = $This.find('.select_arrow').outerWidth(true);
-					var textboxWidth = $This.find('.select_main').innerWidth();
-					$This.find('.select_content').css({'width':(textboxWidth-arrowWidth) + 'px'});
+					$This.find('.select_arrow').find(opts.arrowTip.trim()).load(function(){
+						var arrowWidth = $This.find('.select_arrow').outerWidth(true);
+						var textboxWidth = $This.find('.select_main').innerWidth();
+						$This.find('.select_content').css({'width':(textboxWidth-arrowWidth) + 'px'});
+					})
 				}
 			}
 			if(opts.border.trim() != "")
@@ -201,7 +204,7 @@
 				// $This.find(".select_list").toggleClass('list_open');
 				if($This.find(".select_list").hasClass('list_open')){
 					
-					$This.find(".select_list").removeClass("list_open").animate({ "height": "0px" }, 200,function(){
+					$This.find(".select_list").removeClass("list_open").animate({ "height": "0px" }, opts.animate,function(){
 						$This.find(".select_list").hide();
 						$This.find(".select_list_ul").css('margin-top','0');
 						$This.find(".select_list_ul").css('margin-top','0');
@@ -218,7 +221,7 @@
 							$(element).siblings('.select_main').trigger("click");
 						});
 					}
-					$This.find(".select_list").css({ "height": "0px" }).show().animate({ "height": list_height + "px" }, 200);
+					$This.find(".select_list").css({ "height": "0px" }).show().animate({ "height": list_height + "px" }, opts.animate);
 					list_ul_height = $This.find(".select_list_ul").innerHeight();
 					$This.find(".list_current").css({'background':opts.listHoverBg.trim(),
 						'color':opts.listHoverColor.trim()})
@@ -377,7 +380,7 @@
 				if ($(element).closest('.select_container_nw').length > 0) {
 					e.stopPropagation();
 				} else {
-					$This.find(".select_list").removeClass("list_open").animate({ "height": "0px" }, 200,function(){
+					$This.find(".select_list").removeClass("list_open").animate({ "height": "0px" }, opts.animate,function(){
 						$This.find(".select_list").hide();
 						$This.find(".select_list_ul").css('margin-top','0');
 						$This.find(".select_list_ul").css('margin-top','0');

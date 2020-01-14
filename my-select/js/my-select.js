@@ -72,7 +72,9 @@
 					content:'▼',
 					height:'100%',
 					width:'max-content',
-					html:'none'
+					width:'20px',
+					html:'none',
+					arrowTag: 'img'
 				}
 			};
 			
@@ -183,16 +185,18 @@
 				$This.find('.select_arrow').html(opts.arrow.html.trim());
 				$This.find('.select_main').css({'position':'relative'});
 				$This.find('.select_arrow').css({'height':opts.arrow.height.trim(),width:opts.arrow.width.trim(),'position':'absolute','top':'0','right':'0'});
-				$This.find('.select_arrow').children().css({'display':'block','-moz-user-select':'none','-webkit-user-select':'none','user-select':'none'});
-				var arrowWidth = $This.find('.select_arrow').outerWidth(true);
-				var textboxWidth = $This.find('.select_main').innerWidth();
-				$This.find('.select_content').css({'width':(textboxWidth-arrowWidth) + 'px'});
+				$This.find('.select_arrow').css({'display':'block','-moz-user-select':'none','-webkit-user-select':'none','user-select':'none'});
+				$This.find('.select_arrow').find(opts.arrow.arrowTag.trim()).load(function(){
+					var arrowWidth = $This.find('.select_arrow').outerWidth(true);
+					var textboxWidth = $This.find('.select_main').innerWidth();
+					$This.find('.select_content').css({'width':(textboxWidth-arrowWidth) + 'px'});
+				})
 			}else{
 				$This.find('.select_arrow').text(opts.arrow.content.trim());
 				$This.find('.select_main').css({'position':'relative'});
 				$This.find('.select_arrow').css({'height':opts.arrow.height.trim(),width:opts.arrow.width.trim(),'position':'absolute','top':'0','right':'0'});
 				$This.find('.select_arrow').css({'display':'block','-moz-user-select':'none','-webkit-user-select':'none','user-select':'none'});
-				var arrowWidth = $This.find('.select_arrow').outerWidth(true);
+				var arrowWidth = parseInt(opts.arrow.width.trim().replace('px',''));
 				var textboxWidth = $This.find('.select_main').innerWidth();
 				$This.find('.select_content').css({'width':(textboxWidth-arrowWidth) + 'px'});
 			}
