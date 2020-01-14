@@ -56,7 +56,8 @@
 						width:'150px',
 						background:'#00003e',
 						border:'1px solid #536f80',
-						borderRadius:'0'
+						borderRadius:'0',
+						animate: 200
 					}
 				},
 				/* 滚动条样式 */
@@ -85,9 +86,12 @@
 			            checkOptions(obj[a]); //递归遍历
 			        }
 			        else {
-						if(obj[a].trim() == ''){
+						if(typeof (obj[a]) == 'string' && obj[a].trim() === ''){
 							delete obj.a;
-							console.info('delete option : \'' + a + '\'');
+							console.info('delete opts : \'' + a + '\'');
+						}else if(typeof (obj[a]) != 'string' && obj[a] == null){
+							delete obj.a;
+							console.info('delete opts : \'' + a + '\'');
 						}
 			        }
 			    }
@@ -165,7 +169,7 @@
 			$This.find(".select_content").css({'width':'-webkit-fill-available','padding':'0 5px','overflow-x': 'hidden','text-overflow':'ellipsis','white-space': 'nowrap','display':'inline-block'});
 			// 使得options中的选项文字不能被光标选中
 			$This.find(".select_list_ul").css({'-moz-user-select':'none','-webkit-user-select':'none','user-select':'none'})
-			
+			$This.find(".select_main").css({'-moz-user-select':'none','-webkit-user-select':'none','user-select':'none'})
 			/* 初始状态 option处于折叠状态 */
 			$This.find('.select_list').hide();
 			
@@ -242,7 +246,7 @@
 				
 				if($This.find(".select_list").hasClass('list_open')){
 					
-					$This.find(".select_list").removeClass("list_open").animate({ "height": "0px" }, 200,function(){
+					$This.find(".select_list").removeClass("list_open").animate({ "height": "0px" }, opts.options.itemStyle.animate,function(){
 						$This.find(".select_list").hide();
 						$This.find(".select_list_ul").css('margin-top','0');
 						$This.find(".select_list_ul").css('margin-top','0');
@@ -258,7 +262,7 @@
 							/* console.info('class : ' + $(element).attr('class')); */
 						});
 					}
-					$This.find(".select_list").css({ "height": "0px" }).show().animate({ "height": list_height + "px" }, 200);
+					$This.find(".select_list").css({ "height": "0px" }).show().animate({ "height": list_height + "px" }, opts.options.itemStyle.animate);
 					list_ul_height = $This.find(".select_list_ul").outerHeight(true);
 					$This.find(".list_current").css({
 						'background':opts.options.option.highLight.background.trim(),
@@ -432,7 +436,7 @@
 				if ($(element).closest('.select_container_nw').length > 0) {
 					e.stopPropagation();
 				} else {
-					$This.find(".select_list").removeClass("list_open").animate({ "height": "0px" }, 200,function(){
+					$This.find(".select_list").removeClass("list_open").animate({ "height": "0px" }, opts.options.itemStyle.animate,function(){
 						$This.find(".select_list").hide();
 						$This.find(".select_list_ul").css('margin-top','0');
 						$This.find(".select_list_ul").css('margin-top','0');
